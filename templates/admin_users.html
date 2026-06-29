@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>用户管理</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Microsoft YaHei",sans-serif;}
+body{
+    background:url("/static/bg-cangqiong.jpg") no-repeat center center fixed;
+    background-size:cover;
+    display:flex;align-items:center;justify-content:center;
+    min-height:100vh;padding:20px;
+}
+.box{
+    width:100%;max-width:800px;
+    padding:30px;
+    background:rgba(10,15,30,0.4);
+    backdrop-filter:blur(13px);
+    border-radius:22px;
+    color:#87CEFA;
+    text-align:center;
+}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+td,th{padding:10px;text-align:center;}
+tr{border-bottom:1px solid rgba(10,15,30,0.4);}
+button{
+    padding:6px 10px;
+    background:rgba(10,15,30,0.4);
+    border:1px solid rgba(10,15,30,0.4);
+    color:#87CEFA;
+    border-radius:8px;
+    cursor:pointer;
+    transition:all 0.3s;
+}
+button:hover{
+    background:rgba(20,30,60,0.6);
+    transform:scale(1.05);
+}
+a{
+    color:#87CEFA;
+    text-decoration:none;
+    transition:all 0.3s;
+}
+a:hover{color:#fff;}
+.flash{
+    padding:10px;background:rgba(10,15,30,0.3);
+    border-radius:8px;margin-bottom:15px;
+}
+/* 改密输入框样式 */
+.pwd-input {
+    width: 80px;
+    padding: 4px;
+    background: rgba(10,15,30,0.3);
+    border: 1px solid #87CEFA;
+    border-radius: 4px;
+    color: #87CEFA;
+    outline: none;
+}
+</style>
+</head>
+<body>
+<div class="box">
+    <h2>用户管理</h2>
+    {% with msgs = get_flashed_messages(with_categories=true) %}
+    {% if msgs %}
+        {% for c, m in msgs %}
+            <div class="flash">{{m}}</div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>用户名</th>
+            <th>角色</th>
+            <th>性别</th>
+            <th>修改密码</th>
+            <th>操作</th>
+        </tr>
+        {% for u in users %}
+        <tr>
+            <td>{{u[0]}}</td>
+            <td>{{u[1]}}</td>
+            <td>{{u[2]}}</td>
+            <!-- 新增：性别列 u[3] 对应数据库 gender 字段 -->
+            <td>{{u[3]}}</td>
+            <!-- 新增：修改密码表单 对接 /admin/reset_pwd 接口 -->
+            <td>
+                <form method="POST" action="/admin/reset_pwd" style="display:inline;">
+                    <input type="hidden" name="id" value="{{u[0]}}">
+                    <input type="text" class="pwd-input" name="password" placeholder="新密码" required>
+                    <button type="submit" onclick="return confirm('确定修改该用户密码？')">确认</button>
+                </form>
+            </td>
+            <td>
+                <a href="/admin/history/{{u[1]}}"><button>查看记录</button></a>
+                <form method="POST" action="/admin/del_user" style="display:inline;" onsubmit="return confirm('确定删除该用户？')">
+                    <input type="hidden" name="id" value="{{u[0]}}">
+                    <button type="submit">删除用户</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <a href="/">返回首页</a>
+</div>
+</body>
+</html>

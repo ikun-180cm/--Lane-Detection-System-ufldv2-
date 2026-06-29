@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>车道检测系统</title>
+<style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family: "Microsoft YaHei",sans-serif;}
+    body{
+        background:url("/static/bg-cangqiong.jpg") no-repeat center center fixed;
+        background-size:cover;
+        display:flex;align-items:center;justify-content:center;
+        min-height:100vh;padding:20px;
+    }
+    .container{
+        width:100%;max-width:500px;
+        padding:40px;
+        text-align:center;
+        background: rgba(10, 15, 30, 0.40);
+        backdrop-filter: blur(13px) saturate(160%);
+        -webkit-backdrop-filter: blur(22px) saturate(130%);
+        border: 1px solid rgba(10, 15, 30, 0.40);
+        border-radius:22px;
+        color: #87CEFA;
+    }
+    .avatar-btn{
+        width:80px;height:80px;border-radius:50%;
+        background:rgba(10, 15, 30, 0.40);margin:0 auto 20px;
+        display:flex;align-items:center;justify-content:center;
+        font-size:32px;color: #87CEFA;cursor:pointer;
+        border:2px dashed rgba(10, 15, 30, 0.40);
+        transition: all 0.3s ease;
+    }
+    .avatar-btn img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+    .avatar-btn:hover{
+        transform: scale(1.08);
+        border-color: #87CEFA;
+        box-shadow: 0 0 15px rgba(137,207,250,0.4);
+    }
+    .gender-select {
+        margin: 15px 0 20px;
+        padding: 15px;
+        background: rgba(10, 15, 30, 0.2);
+        border-radius: 12px;
+    }
+    .gender-select p {
+        margin-bottom: 10px;
+        font-size: 16px;
+    }
+    .gender-options {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 12px;
+    }
+    .welcome{
+        font-size:18px;color: #87CEFA;margin-bottom:30px;
+        animation:breath 2s infinite alternate;
+    }
+    @keyframes breath{ from{opacity:0.7;} to{opacity:1;} }
+    .btn{
+        display:block;width:100%;padding:14px;margin:10px 0;
+        border:none;border-radius:12px;font-size:16px;
+        color: #87CEFA;text-decoration:none;
+        background: rgba(10, 15, 30, 0.40);
+        border:1px solid rgba(10, 15, 30, 0.40);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .btn:hover{
+        background: rgba(20,30,60,0.6);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(10,15,30,0.3);
+        border-color: #87CEFA;
+    }
+    .btn:active{
+        transform: translateY(0);
+    }
+    .btn::after{
+        content:"";
+        position:absolute;top:50%;left:50%;
+        width:0;height:0;
+        background:rgba(137,207,250,0.2);
+        border-radius:50%;
+        transform:translate(-50%,-50%);
+        transition:width 0.6s,height 0.6s;
+    }
+    .btn:active::after{
+        width:300px;height:300px;opacity:0;
+    }
+    .gender-save{
+        padding:8px 20px;
+        border:none;
+        border-radius:8px;
+        background:rgba(10,15,30,0.4);
+        color:#87CEFA;
+        cursor:pointer;
+        transition:all 0.3s ease;
+    }
+    .gender-save:hover{
+        background:rgba(20,30,60,0.6);
+        transform:scale(1.05);
+    }
+    .flash{padding:10px;border-radius:8px;margin-bottom:15px;color:#87CEFA;background:rgba(136,152,166,0.1);}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="avatar-btn" onclick="location.href='/avatar'">
+        {% if avatar and avatar != '' %}
+        <img src="/static/avatar/{{avatar}}" alt="头像">
+        {% else %} + {% endif %}
+    </div>
+
+    <div class="gender-select">
+        <p>选择性别</p>
+        <form method="POST" action="/gender">
+            <div class="gender-options">
+                <label><input type="radio" name="gender" value="男"> 男 ♂</label>
+                <label><input type="radio" name="gender" value="女"> 女 ♀</label>
+                <label><input type="radio" name="gender" value="未知"> 未知 ?</label>
+            </div>
+            <button type="submit" class="gender-save">保存性别</button>
+        </form>
+    </div>
+
+    <div class="welcome">欢迎回来，{{session.username}} {{gender}}</div>
+
+    {% with msgs = get_flashed_messages(with_categories=true) %}
+    {% if msgs %}
+        {% for c, m in msgs %}
+        <div class="flash">{{m}}</div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <a class="btn" href="/upload">上传文件</a>
+    <a class="btn" href="/history">历史记录</a>
+    {% if session.role == 'admin' %}
+    <a class="btn" href="/admin/users">管理员后台</a>
+    {% endif %}
+    <a class="btn" href="/logout">退出登录</a>
+</div>
+</body>
+</html>

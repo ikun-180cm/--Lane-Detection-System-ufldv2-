@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>提示</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Microsoft YaHei",sans-serif;}
+body{
+    background:url("/static/bg-cangqiong.jpg") no-repeat center center fixed;
+    background-size:cover;
+    display:flex;align-items:center;justify-content:center;
+    min-height:100vh;padding:20px;
+}
+.error-box{
+    width:100%;max-width:500px;
+    padding:40px;
+    background:rgba(10,15,30,0.4);
+    backdrop-filter:blur(13px);
+    border-radius:22px;
+    color:#87CEFA;
+    text-align:center;
+}
+p{font-size:18px;margin:25px 0;line-height:1.6;}
+.btn{
+    padding:12px 28px;
+    background:rgba(10,15,30,0.4);
+    border:1px solid rgba(10,15,30,0.4);
+    border-radius:10px;
+    color:#87CEFA;
+    font-size:16px;
+    cursor:pointer;
+    transition:all 0.3s ease;
+    position:relative;
+    overflow:hidden;
+}
+.btn:hover{
+    background:rgba(20,30,60,0.6);
+    transform:translateY(-2px);
+    box-shadow:0 6px 12px rgba(0,0,0.2);
+    border-color:#87CEFA;
+}
+.btn:active{
+    transform:translateY(0);
+}
+.btn::after{
+    content:"";
+    position:absolute;
+    top:50%;left:50%;
+    width:0;height:0;
+    background:rgba(137,207,250,0.2);
+    border-radius:50%;
+    transform:translate(-50%,-50%);
+    transition:width 0.6s ease,height 0.6s ease;
+}
+.btn:active::after{
+    width:300px;height:300px;opacity:0;
+}
+</style>
+</head>
+<body>
+<div class="error-box">
+    <h2>系统提示</h2>
+    <p>{{ message }}</p>
+    <button class="btn" onclick="location.href='{{ back_url }}'">{{ btn_text }}</button>
+</div>
+</body>
+</html>

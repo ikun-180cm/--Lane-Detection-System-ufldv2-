@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>用户上传记录</title>
+<style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:"Microsoft YaHei",sans-serif;}
+    body{
+        background:url("/static/bg-cangqiong.jpg") no-repeat center center fixed;
+        background-size:cover;
+        display:flex;align-items:center;justify-content:center;
+        min-height:100vh;padding:20px;
+    }
+    .box{
+        width:100%;max-width:900px;
+        padding:30px;
+        background:rgba(10,15,30,0.4);
+        backdrop-filter:blur(13px);
+        border-radius:22px;
+        color:#87CEFA;
+    }
+    table{width:100%;border-collapse:collapse;margin:20px 0;}
+    td,th{padding:12px;text-align:center;}
+    tr{border-bottom:1px solid rgba(10,15,30,0.4);}
+    .batch-btn{
+        padding:8px 16px;
+        background:rgba(10,15,30,0.4);
+        border:1px solid rgba(10,15,30,0.4);
+        color:#87CEFA;
+        border-radius:12px;
+        margin-bottom:15px;
+        transition:all 0.3s ease;
+        cursor:pointer;
+    }
+    .batch-btn:hover{
+        background:rgba(20,30,60,0.6);
+        transform:translateY(-2px);
+    }
+    button{
+        padding:6px 10px;
+        background:rgba(10,15,30,0.4);
+        border:1px solid rgba(10,15,30,0.4);
+        color:#87CEFA;
+        border-radius:8px;
+        cursor:pointer;
+        transition:all 0.3s;
+    }
+    button:hover{
+        background:rgba(20,30,60,0.6);
+        transform:scale(1.05);
+    }
+    a{color:#87CEFA;text-decoration:none;transition:all 0.3s;}
+    a:hover{color:#fff;}
+    .page{text-align:center;margin:20px 0;}
+    .flash{
+        padding:10px;background:rgba(10,15,30,0.3);
+        border-radius:8px;margin-bottom:15px;
+    }
+    .view-btn{
+        padding:6px 10px;
+        background:rgba(10,15,30,0.4);
+        border:1px solid rgba(10,15,30,0.4);
+        color:#87CEFA;
+        border-radius:8px;
+        text-decoration:none;
+        margin-right:5px;
+        transition:all 0.3s ease;
+    }
+    .view-btn:hover{
+        background:rgba(20,30,60,0.6);
+    }
+</style>
+</head>
+<body>
+<div class="box">
+    <a href="/admin/users">← 返回用户列表</a>
+    <h2>📜 {{ username }} 的上传记录</h2>
+    {% with msgs = get_flashed_messages(with_categories=true) %}
+    {% if msgs %}
+        {% for c, m in msgs %}
+            <div class="flash">{{m}}</div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <form method="post" action="/admin/batch_del">
+        <input type="hidden" name="username" value="{{username}}">
+        <button class="batch-btn" onclick="return confirm('确定批量删除？')">批量删除选中</button>
+        <table>
+            <tr>
+                <th>选择</th>
+                <th>文件名</th>
+                <th>上传时间</th>
+                <th>操作</th>
+            </tr>
+            {% for r in records %}
+            <tr>
+                <td><input type="checkbox" name="record_ids" value="{{r[0]}}"></td>
+                <td>{{r[2]}}</td>
+                <td>{{r[3]}}</td>
+                <td>
+                    <a href="/result?filename={{ r[2].replace('.', '_result.') }}&original={{r[2]}}" class="view-btn">查看</a>
+                    <form method="post" action="/admin/del_record" style="display:inline;">
+                        <input type="hidden" name="id" value="{{r[0]}}">
+                        <input type="hidden" name="username" value="{{username}}">
+                        <button onclick="return confirm('确定删除？')">删除</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </form>
+
+    <div class="page">
+        {% if page>1 %}<a href="?page={{page-1}}">上一页</a>{% endif %}
+        第 {{ page }} / {{ total_pages }} 页
+        {% if page < total_pages %}<a href="?page={{page+1}}">下一页</a>{% endif %}
+    </div>
+</div>
+</body>
+</html>

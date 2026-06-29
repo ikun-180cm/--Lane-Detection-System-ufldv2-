@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}车道检测系统{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        background: url('/static/bg-cangqiong.jpg') no-repeat center center fixed;  /* 或 preview.jpg */
+        background-size: cover;
+        background-position: center 35%;   /* 关键调整：向下偏移35%，让月牙儿/人物更在上半部分显示，避免切头/切脚 */
+        color: white;
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        overflow-x: hidden;
+    }
+    .glass {
+        background: rgba(10, 15, 30, 0.40);
+        backdrop-filter: blur(13px) saturate(160%);
+        -webkit-backdrop-filter: blur(18px) saturate(190%);
+        border: 1px solid rgba(10, 15, 30, 0.40);
+        border-radius: 1.5rem;
+        box-shadow: 0 10px 40px rgba(10, 15, 30, 0.40);
+    }
+    .glow-text {
+        text-shadow: 0 0 14px rgba(10, 15, 30, 0.40), 0 0 28px rgba(10, 15, 30, 0.40);
+    }
+    /* ... 其他 keyframes 和 .btn-gradient 保持不变 ... */
+    .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 15, 30, 0.40);   /* 加深遮罩到40%，让背景不那么刺眼，文字更清晰 */
+        pointer-events: none;
+        z-index: -1;
+    }
+</style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div class="overlay"></div>
+
+    <div class="relative z-10 min-h-screen flex flex-col">
+        {% block content %}{% endblock %}
+    </div>
+
+    {% block scripts %}{% endblock %}
+    <!-- 错误页面自动跳转脚本 -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const text = document.body.innerText.trim();
+    if (text.startsWith('__LOGIN_ERROR__')) {
+        const msg = text.replace('__LOGIN_ERROR__', '').trim();
+        window.location.replace('/error?msg=' + encodeURIComponent(msg));
+    }
+});
+</script>
+</body>
+</html>
